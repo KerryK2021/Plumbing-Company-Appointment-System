@@ -263,8 +263,8 @@ Response 200
     "id": 1,
     "plumber_id": 1,
     "service_id": 2,
-    "date": '01/03/2024',
-    "time": '08:00',
+    "date": "01/03/2024",
+    "time": "08:00",
     "notes" : "Leaking tap in bathroom"
     "status_id" : 1
   },
@@ -272,8 +272,8 @@ Response 200
     "id": 2,
     "plumber_id": 1,
     "service_id": 1,
-    "date": '04/03/2024',
-    "time": '11:00',
+    "date": "04/03/2024",
+    "time": "11:00",
     "notes" : "Install of new shower"
     "status_id" : 4
   }
@@ -289,8 +289,8 @@ Response 200
     "id": 2,
     "plumber_id": 1,
     "service_id": 1,
-    "date": '04/03/2024',
-    "time": '11:00',
+    "date": "04/03/2024",
+    "time": "11:00",
     "notes" : "Install of new shower"
     "status_id" : 4
 }
@@ -305,8 +305,8 @@ Response - `201 Created`
     "id": 2,
     "plumber_id": 1,
     "service_id": 1,
-    "date": '04/03/2024',
-    "time": '11:00',
+    "date": "04/03/2024",
+    "time": "11:00",
     "notes" : "Install of new shower"
     "status_id" : 4
 }
@@ -403,16 +403,16 @@ Response 200
     "id": 1,
     "plumber_id": 1,
     "service_id": 2,
-    "date": '01/03/2024',
-    "time": '08:00',
+    "date": "01/03/2024",
+    "time": "08:00",
     "available": true
   },
   {
     "id": 2,
     "plumber_id": 1,
     "service_id": 1,
-    "date": '04/03/2024',
-    "time": '11:00',
+    "date": "04/03/2024",
+    "time": "11:00",
     "available": false
   }
 ]
@@ -427,8 +427,8 @@ Response 200
     "id": 2,
     "plumber_id": 1,
     "service_id": 1,
-    "date": '04/03/2024',
-    "time": '11:00',
+    "date": "04/03/2024",
+    "time": "11:00",
     "available": false
 }
 ```
@@ -442,8 +442,8 @@ Response - `201 Created`
     "id": 3,
     "plumber_id": 2,
     "service_id": 1,
-    "date": '08/04/2024',
-    "time": '11:00',
+    "date": "08/04/2024",
+    "time": "11:00",
     "available": false
 }
 ```
@@ -469,16 +469,16 @@ Response 200
   {
     "id": 1,
     "appointment_id": 1,
-    "amount": £200,
+    "amount": 200.00,
     "payment_method": "Card",
-    "transaction_date": '24/03/2024',
+    "transaction_date": "24/03/2024",
   },
   {
     "id": 2,
     "appointment_id": 2,
-    "amount": £50,
+    "amount": 50.00,
     "payment_method": 'Card',
-    "transaction_date": '01/03/2024',
+    "transaction_date": "01/03/2024",
   }
 ]
 ```
@@ -491,9 +491,9 @@ Response 200
   {
     "id": 1,
     "appointment_id": 1,
-    "amount": £200,
+    "amount": 200.00,
     "payment_method": "Card",
-    "transaction_date": '24/03/2024',
+    "transaction_date": "24/03/2024",
   },
 ```
 ---
@@ -505,9 +505,9 @@ Response - `201 Created`
   {
     "id": 1,
     "appointment_id": 1,
-    "amount": £200,
+    "amount": 200.00,
     "payment_method": "Card",
-    "transaction_date": '24/03/2024',
+    "transaction_date": "24/03/2024",
   },
 ```
 ---
@@ -518,7 +518,7 @@ Response - `200 OK`
 Request
 ```json
 {
-    "amount": £60
+    "amount": 60.00
 }
 ```
 ---
@@ -533,13 +533,13 @@ Response 200
     "id": 1,
     "service_name": "Pipes",
     "description" : "Pipe Fitting",
-    "price" : £30
+    "price" : 30.00
   },
   {
     "id": 2,
     "service_name": "Shower",
     "description" : "Shower Fitting",
-    "price" : £30
+    "price" : 30.00
   }
 ]
 ```
@@ -554,13 +554,13 @@ Response 200
     "id": 1,
     "service_name": "Pipes",
     "description" : "Pipe Fitting",
-    "price" : £30
+    "price" : 30.00
   },
   {
     "id": 1,
     "service_name": "Shower",
     "description" : "Shower Fitting",
-    "price" : £30
+    "price" : 30.00
   }
 ]
 ```
@@ -574,7 +574,7 @@ Response - `201 Created`
     "id": 1,
     "service_name": "Service",
     "description" : "Boiler Service",
-    "price" : £250
+    "price" : 250.00
 }
 ```
 ---
@@ -585,7 +585,7 @@ Response - `200 OK`
 Request
 ```json
 {
-    "price": £50
+    "price": 50.00
 }
 ```
 ---
