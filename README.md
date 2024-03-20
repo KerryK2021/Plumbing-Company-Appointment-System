@@ -46,6 +46,7 @@ erDiagram
         varchar email
         varchar phone
         varchar availability
+        serial role_id FK
     }
 
     services {
@@ -76,12 +77,18 @@ erDiagram
         bool available
     }
 
+    roles {
+      serial id PK
+      varchar role_name 
+    }
+
     users ||--o{ appointments : ""
     plumbers ||--o{ appointments : ""
     services ||--o{ appointments : ""
     appointment_status ||--o{ appointments : ""
     appointments ||--|| payments : ""
     plumbers ||--o{ availablity : ""
+    users ||--||{ roles : ""
 
 ```
 
