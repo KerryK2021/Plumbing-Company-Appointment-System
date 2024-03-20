@@ -10,19 +10,19 @@ flowchart
   APPOINTMENTS --- APPOINTMENT_STATUS
   PAYMENTS --- APPOINTMENTS
   AVAILABILITY --- PLUMBERS
+  ROLES --- USERS
 ```
 
 ### ER Diagram
 ```mermaid
 erDiagram
-  users {
+        users {
         serial id PK
         varchar first_name
         varchar last_name
         varchar email
         varchar phone
         varchar address
-        varchar postcode
         varchar username
         varchar password
         serial role_id FK
@@ -30,7 +30,7 @@ erDiagram
 
     appointments {
         serial id PK
-        serial user_id FK
+        serial customer_id FK
         serial plumber_id FK
         serial service_id FK
         date date
@@ -46,7 +46,6 @@ erDiagram
         varchar email
         varchar phone
         varchar availability
-        serial role_id FK
     }
 
     services {
@@ -78,8 +77,8 @@ erDiagram
     }
 
     roles {
-      serial id PK
-      varchar role_name 
+        serial id PK
+        varchar role_name 
     }
 
     users ||--o{ appointments : ""
@@ -88,7 +87,7 @@ erDiagram
     appointment_status ||--o{ appointments : ""
     appointments ||--|| payments : ""
     plumbers ||--o{ availablity : ""
-    users ||--||{ roles : ""
+    users ||--|{ roles : ""
 
 ```
 
