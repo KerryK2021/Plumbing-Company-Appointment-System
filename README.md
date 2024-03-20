@@ -4,7 +4,7 @@ A repository for Plumbing Company Appointment System Project.
 ### Domain Model
 ```mermaid
 flowchart 
-  CUSTOMER --- APPOINTMENTS
+  USERS --- APPOINTMENTS
   PLUMBERS --- APPOINTMENTS
   APPOINTMENTS --- SERVICES
   APPOINTMENTS --- APPOINTMENT_STATUS
@@ -15,13 +15,14 @@ flowchart
 ### ER Diagram
 ```mermaid
 erDiagram
-  customers {
+  users {
         serial id PK
         varchar first_name
         varchar last_name
         varchar email
         varchar phone
         varchar address
+        varchar postcode
         varchar username
         varchar password
         serial role_id FK
@@ -29,7 +30,7 @@ erDiagram
 
     appointments {
         serial id PK
-        serial customer_id FK
+        serial user_id FK
         serial plumber_id FK
         serial service_id FK
         date date
@@ -75,7 +76,7 @@ erDiagram
         bool available
     }
 
-    customers ||--o{ appointments : ""
+    users ||--o{ appointments : ""
     plumbers ||--o{ appointments : ""
     services ||--o{ appointments : ""
     appointment_status ||--o{ appointments : ""
@@ -83,3 +84,38 @@ erDiagram
     plumbers ||--o{ availablity : ""
 
 ```
+
+### API Specification
+#### USERS
+`GET /users` 
+Return a list of all users
+
+Response 200
+```json
+[
+  {
+    "id": 1,
+    "first_name": "Kerry",
+    "last_name": "Kennedy",
+    "email": "kerrytkennedy@hotmail.com",
+    "phone": "07584916321",
+    "address": "78 Wellington Park Drive",
+    "postcode": "BT893PT",
+    "username": "KerryK0517",
+    "password": "password123",
+    "role_id" : 1
+  },
+  {
+    "id": 2,
+    "first_name": "Joe",
+    "last_name": "Bloggs",
+    "email": "jbloggs@email.com",
+    "phone": "07819372198",
+    "address": "123 New Street",
+    "postcode": "JBloggs123",
+    "password": "newpass1234",
+    "role_id" : 2
+  }
+]
+```
+---
