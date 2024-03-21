@@ -25,17 +25,18 @@ erDiagram
         varchar address
         varchar username
         varchar password
+        boolean is_active
         serial role_id FK
     }
 
     appointments {
         serial id PK
-        serial customer_id FK
-        serial plumber_id FK
-        serial service_id FK
         date date
         datetime time
         varchar notes
+        serial customer_id FK
+        serial plumber_id FK
+        serial service_id FK
         serial status_id FK
     }
 
@@ -55,36 +56,37 @@ erDiagram
         varchar price
     }
 
-    appointment_status {
+    appointment_statuses {
         serial id PK
         varchar status
     }
 
     payments {
         serial id PK
-        serial appointment_id FK
         decimal amount
         varchar payment_method 
         datetime transaction_date
+        serial appointment_id FK
     }
 
     availablity {
         serial id PK
-        serial plumber_id FK
         date date
         time time_slot
         bool available
+        serial plumber_id FK
     }
 
     roles {
         serial id PK
-        varchar role_name 
+        varchar role_name
+        serial user_id FK
     }
 
     users ||--o{ appointments : ""
     plumbers ||--o{ appointments : ""
     services ||--o{ appointments : ""
-    appointment_status ||--o{ appointments : ""
+    appointment_statuses ||--o{ appointments : ""
     appointments ||--|| payments : ""
     plumbers ||--o{ availablity : ""
     users ||--|{ roles : ""
@@ -169,7 +171,7 @@ Response - `200 OK`
 Request
 ```json
 {
-"password": "password2"
+"is_active": false
 }
 ```
 ---
@@ -329,9 +331,9 @@ Delete an appointment for a specific user
 Response - `204 No Content`
 
 ---
-#### APPOINTMENT_STATUS
-`GET /appointment_status` 
-Return a list of all status'
+#### APPOINTMENT_STATUSES
+`GET /appointment_statuses` 
+Return a list of all statuses
 
 Response 200
 ```json
@@ -347,7 +349,7 @@ Response 200
 ]
 ```
 ---
-`GET /appointment_status/{status_id}`
+`GET /appointment_statuses/{status_id}`
 Return an appointment status
 
 Response 200
@@ -364,7 +366,7 @@ Response 200
 ]
 ```
 ---
-`POST /appointment_status`
+`POST /appointment_statuses`
 Create a status
 
 Response - `201 Created`
@@ -375,7 +377,7 @@ Response - `201 Created`
 }
 ```
 ---
-`PUT /appointment_status/{appointment_id}`
+`PUT /appointment_statuses/{appointment_id}`
 Update an appointment status by appointment id
 
 Response - `200 OK`
@@ -386,7 +388,7 @@ Request
 }
 ```
 ---
-`DELETE /appopintment_status/{status_id}`
+`DELETE /appopintment_statuses/{status_id}`
 Delete an appointment status by id
 
 Response - `204 No Content`
@@ -477,7 +479,7 @@ Response 200
     "id": 2,
     "appointment_id": 2,
     "amount": 50.00,
-    "payment_method": 'Card',
+    "payment_method": "Card",
     "transaction_date": "01/03/2024",
   }
 ]
@@ -494,7 +496,7 @@ Response 200
     "amount": 200.00,
     "payment_method": "Card",
     "transaction_date": "24/03/2024",
-  },
+  }
 ```
 ---
 `POST /payment`
@@ -508,7 +510,7 @@ Response - `201 Created`
     "amount": 200.00,
     "payment_method": "Card",
     "transaction_date": "24/03/2024",
-  },
+  }
 ```
 ---
 `PUT /payment/{user_id}`
@@ -591,6 +593,63 @@ Request
 ---
 `DELETE /service/{plumber_id}`
 Delete a service by plumber id 
+
+Response - `204 No Content`
+
+---
+#### Roles
+`GET /users` 
+Return a list of all users
+
+Response 200
+```json
+[
+  {
+    "id": 1,
+    "role_name" : "Admin"
+  },
+  {
+    "id": 2,
+    "role_name" : "User"
+  }
+]
+```
+---
+`GET /role/{role_id}`
+Return a role
+
+Response 200
+```json
+  {
+    "id": 1,
+    "role_name": "Admin"
+  }
+```
+---
+`POST /role`
+Create a role
+
+Response - `201 Created`
+```json
+  {
+    "id": 3,
+    "role_name": "Plumber"
+  }
+```
+---
+`POST /roles`
+Create a new role
+
+Response - `201 Created`
+```json
+{
+    "id": 4,
+    "role_name": "SuperUser"
+}
+```
+---
+`DELETE /role/{role_id}`
+Delete a role by role id 
 
 Response - `204 No Content`
 
