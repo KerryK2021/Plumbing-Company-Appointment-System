@@ -23,6 +23,7 @@ erDiagram
         varchar email
         varchar phone
         varchar address
+        varchar postcode
         varchar username
         varchar password
         boolean is_active
