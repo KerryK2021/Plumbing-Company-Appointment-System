@@ -3,41 +3,34 @@ A repository for Plumbing Company Appointment System Project.
 
 ### Domain Model
 ```mermaid
-flowchart 
-  USERS --- APPOINTMENTS
-  PLUMBERS --- APPOINTMENTS
-  APPOINTMENTS --- SERVICES
-  APPOINTMENTS --- APPOINTMENT_STATUS
-  PAYMENTS --- APPOINTMENTS
-  AVAILABILITY --- PLUMBERS
-  ROLES --- USERS
+flowchart
+appointments --- customers
+appointments --- plumbers
+appointments --- invoices
+invoices --- payments
+users --- roles
+appointments --- services
+appointments --- statuses
+users --- customers
 ```
 
 ### ER Diagram
 ```mermaid
 erDiagram
-        users {
+     users {
         serial id PK
-        varchar first_name
-        varchar last_name
-        varchar email
-        varchar phone
-        varchar address
-        varchar postcode
         varchar username
         varchar password
-        boolean is_active
         serial role_id FK
+        bool is_active 
     }
 
     appointments {
         serial id PK
         date date
-        datetime time
-        varchar notes
+        varchar duration
         serial customer_id FK
         serial plumber_id FK
-        serial service_id FK
         serial status_id FK
     }
 
@@ -47,17 +40,16 @@ erDiagram
         varchar last_name
         varchar email
         varchar phone
-        varchar availability
+        varchar specialization
     }
 
     services {
         serial id PK
         varchar service_name
         varchar description
-        decimal price
     }
 
-    appointment_statuses {
+    statuses {
         serial id PK
         varchar status
     }
@@ -66,32 +58,42 @@ erDiagram
         serial id PK
         decimal amount
         varchar payment_method 
-        datetime transaction_date
+        datetime payment_date
+        serial invoice_id FK
         serial appointment_id FK
-    }
-
-    availablity {
-        serial id PK
-        date date
-        time time_slot
-        bool available
-        serial plumber_id FK
     }
 
     roles {
         serial id PK
-        varchar role_name
+        varchar role_name 
+    }
+
+    invoices {
+        serial id PK
+        decimal total_amount
+        varchar status
+        serial appointment_id FK
+    }
+
+    customers {
+        serial id PK
+        varchar first_name
+        varchar last_name
+        varchar email
+        varchar phone
+        varchar address
+        varchar postcode
         serial user_id FK
     }
 
-    users ||--o{ appointments : ""
-    plumbers ||--o{ appointments : ""
-    services ||--o{ appointments : ""
-    appointment_statuses ||--o{ appointments : ""
-    appointments ||--|| payments : ""
-    plumbers ||--o{ availablity : ""
-    users ||--|{ roles : ""
-
+    appointments }|--|| customers : ""
+    appointments }|--|| plumbers : ""
+    appointments |o--o| invoices : ""
+    invoices ||--|{ payments : ""
+    users }|--|{ roles : ""
+    appointments }|--|{ services : ""
+    appointments |o--o| statuses : ""
+    customers |o--o| users : ""
 ```
 
 ### API Specification
@@ -111,8 +113,10 @@ Response 200
     "address": "78 Wellington Park Drive",
     "postcode": "BT893PT",
     "username": "KerryK0517",
-    "password": "password123",
-    "role_id" : 1
+    "role": {
+      "id": 1,
+      "role_name": "Admin"
+    }
   },
   {
     "id": 2,
@@ -122,8 +126,11 @@ Response 200
     "phone": "07819372198",
     "address": "123 New Street",
     "postcode": "JBloggs123",
-    "password": "newpass1234",
-    "role_id" : 2
+    "username": "KerryK0517",
+    "role": {
+      "id": 2,
+      "role_name": "User"
+    }
   }
 ]
 ```
@@ -142,7 +149,10 @@ Response 200
     "address": "78 Wellington Park Drive",
     "postcode": "BT893PT",
     "username": "KerryK0517",
-    "role_id" : 1
+    "role": {
+      "id": 1,
+      "role_name": "Admin"
+    }
 }
 ```
 ---
@@ -161,7 +171,10 @@ Response - `201 Created`
     "postcode": "BT893PT",
     "username": "KerryK0517",
     "password": "password123",
-    "role_id" : 1
+    "role": {
+      "id": 1,
+      "role_name": "Admin"
+    }
 }
 ```
 ---
@@ -172,7 +185,7 @@ Response - `200 OK`
 Request
 ```json
 {
-"is_active": false
+  "is_active": false
 }
 ```
 ---
@@ -229,12 +242,11 @@ Create a plumber
 Response - `201 Created`
 ```json
 {
-    "id": 1,
-    "first_name": "Sophie",
-    "last_name": "Bennet",
-    "email": "sbennet@email.com",
-    "phone": "02012345678",
-    "availability" : "8 hours"
+    "first_name": "John",
+    "last_name": "Doe",
+    "email": "johndoe@example.com",
+    "phone": "0123456789",
+    "availability": "10 hours"
 }
 ```
 ---
@@ -245,7 +257,7 @@ Response - `200 OK`
 Request
 ```json
 {
-"availability": "10 hours"
+    "availability": "12 hours"
 }
 ```
 ---
@@ -266,19 +278,19 @@ Response 200
     "id": 1,
     "plumber_id": 1,
     "service_id": 2,
-    "date": "01/03/2024",
-    "time": "08:00",
-    "notes" : "Leaking tap in bathroom"
-    "status_id" : 1
+    "date": "2024-03-15",
+    "time": "10:00",
+    "notes": "Repair leaking faucet",
+    "status_id": 1
   },
   {
     "id": 2,
-    "plumber_id": 1,
+    "plumber_id": 2,
     "service_id": 1,
-    "date": "04/03/2024",
-    "time": "11:00",
-    "notes" : "Install of new shower"
-    "status_id" : 4
+    "date": "2024-03-16",
+    "time": "14:00",
+    "notes": "Install new shower",
+    "status_id": 1
   }
 ]
 ```
@@ -289,13 +301,13 @@ Return an appointment
 Response 200
 ```json
 {
-    "id": 2,
+    "id": 1,
     "plumber_id": 1,
-    "service_id": 1,
-    "date": "04/03/2024",
-    "time": "11:00",
-    "notes" : "Install of new shower"
-    "status_id" : 4
+    "service_id": 2,
+    "date": "2024-03-15",
+    "time": "10:00",
+    "notes": "Repair leaking faucet",
+    "status_id": 1
 }
 ```
 ---
@@ -305,24 +317,22 @@ Create an appointment
 Response - `201 Created`
 ```json
 {
-    "id": 2,
     "plumber_id": 1,
-    "service_id": 1,
-    "date": "04/03/2024",
-    "time": "11:00",
-    "notes" : "Install of new shower"
-    "status_id" : 4
+    "service_id": 2,
+    "date": "2024-03-15",
+    "time": "10:00",
+    "notes": "Repair leaking faucet"
 }
 ```
 ---
-`PUT /appointment/{user_id}`
+`PUT /appointment/{appointment_id}`
 Update an appointment for a specific user
 
 Response - `200 OK`
 Request
 ```json
 {
-  "status_id": 3
+    "notes": "Repair leaking faucet in the kitchen"
 }
 ```
 ---
@@ -332,8 +342,8 @@ Delete an appointment for a specific user
 Response - `204 No Content`
 
 ---
-#### APPOINTMENT_STATUSES
-`GET /appointment_statuses` 
+#### STATUSES
+`GET /statuses` 
 Return a list of all statuses
 
 Response 200
@@ -350,42 +360,35 @@ Response 200
 ]
 ```
 ---
-`GET /appointment_statuses/{status_id}`
+`GET /statuses/{status_id}`
 Return an appointment status
 
 Response 200
 ```json
-[
-  {
+{
     "id": 1,
     "status": "Pending"
-  },
-  {
-    "id": 2,
-    "status": "Work Complete"
-  }
-]
+}
 ```
 ---
-`POST /appointment_statuses`
+`POST /statuses`
 Create a status
 
 Response - `201 Created`
 ```json
 {
-    "id": 3,
-    "status": "Waiting On Payment"
+    "status": "Work Complete"
 }
 ```
 ---
-`PUT /appointment_statuses/{appointment_id}`
+`PUT /statuses/{statuses_id}`
 Update an appointment status by appointment id
 
 Response - `200 OK`
 Request
 ```json
 {
-  "status": "Fully Paid"
+    "status": "Fully Paid"
 }
 ```
 ---
@@ -395,70 +398,73 @@ Delete an appointment status by id
 Response - `204 No Content`
 
 ---
-#### AVAILABILITY
-`GET /availability` 
-Return a list of all availability
+#### CUSTOMERS
+`GET /customers` 
+Return a list of all customers
 
 Response 200
 ```json
 [
   {
     "id": 1,
-    "plumber_id": 1,
-    "service_id": 2,
-    "date": "01/03/2024",
-    "time": "08:00",
-    "available": true
+    "first_name": "John",
+    "last_name": "Doe",
+    "email": "johndoe@example.com",
+    "phone": "123456789",
+    "address": "123 Main Street",
+    "postcode": "12345"
   },
   {
     "id": 2,
-    "plumber_id": 1,
-    "service_id": 1,
-    "date": "04/03/2024",
-    "time": "11:00",
-    "available": false
+    "first_name": "Jane",
+    "last_name": "Smith",
+    "email": "janesmith@example.com",
+    "phone": "987654321",
+    "address": "456 Elm Street",
+    "postcode": "54321"
   }
 ]
 ```
 ---
-`GET /availability/{user_id}`
-Return a users availability
+`GET /customers/{customer_id}`
+Return a customer by id
 
 Response 200
 ```json
 {
-    "id": 2,
-    "plumber_id": 1,
-    "service_id": 1,
-    "date": "04/03/2024",
-    "time": "11:00",
-    "available": false
+    "id": 1,
+    "first_name": "John",
+    "last_name": "Doe",
+    "email": "johndoe@example.com",
+    "phone": "123456789",
+    "address": "123 Main Street",
+    "postcode": "12345"
 }
 ```
 ---
-`POST /availability`
-Create availability for a plumber
+`POST /customer`
+Create a customer
 
 Response - `201 Created`
 ```json
 {
-    "id": 3,
-    "plumber_id": 2,
-    "service_id": 1,
-    "date": "08/04/2024",
-    "time": "11:00",
-    "available": false
+    "first_name": "Alice",
+    "last_name": "Johnson",
+    "email": "alice@example.com",
+    "phone": "555555555",
+    "address": "789 Oak Street",
+    "postcode": "67890"
 }
 ```
 ---
-`PUT /availability/{plumber_id}`
-Update availability by plumber id
+`PUT /customers/{customer_id}`
+Update customer by customer id
 
 Response - `200 OK`
 Request
 ```json
 {
-    "available": true
+    "address": "123 Updated Avenue"
 }
 ```
 ---
@@ -474,30 +480,30 @@ Response 200
     "appointment_id": 1,
     "amount": 200.00,
     "payment_method": "Card",
-    "transaction_date": "24/03/2024",
+    "payment_date": "2024-03-24T00:00:00Z"
   },
   {
     "id": 2,
     "appointment_id": 2,
     "amount": 50.00,
     "payment_method": "Card",
-    "transaction_date": "01/03/2024",
+    "payment_date": "2024-03-01T00:00:00Z"
   }
 ]
 ```
 ---
-`GET /payment/{user_id}`
-Return a users payments
+`GET /payment/{payment_id}`
+Return a payment by id
 
 Response 200
 ```json
-  {
+{
     "id": 1,
     "appointment_id": 1,
     "amount": 200.00,
     "payment_method": "Card",
-    "transaction_date": "24/03/2024",
-  }
+    "payment_date": "2024-03-24T00:00:00Z"
+}
 ```
 ---
 `POST /payment`
@@ -505,23 +511,22 @@ Create a payment record
 
 Response - `201 Created`
 ```json
-  {
-    "id": 1,
-    "appointment_id": 1,
-    "amount": 200.00,
-    "payment_method": "Card",
-    "transaction_date": "24/03/2024",
-  }
+{
+    "appointment_id": 3,
+    "amount": 100.00,
+    "payment_method": "Cash",
+    "payment_date": "2024-03-25T00:00:00Z"
+}
 ```
 ---
-`PUT /payment/{user_id}`
+`PUT /payments/{payment_id}`
 Update a payment by user id
 
 Response - `200 OK`
 Request
 ```json
 {
-    "amount": 60.00
+    "amount": 150.00
 }
 ```
 ---
@@ -535,37 +540,29 @@ Response 200
   {
     "id": 1,
     "service_name": "Pipes",
-    "description" : "Pipe Fitting",
-    "price" : 30.00
+    "description": "Pipe Fitting",
+    "price": 30.00
   },
   {
     "id": 2,
     "service_name": "Shower",
-    "description" : "Shower Fitting",
-    "price" : 30.00
+    "description": "Shower Fitting",
+    "price": 30.00
   }
 ]
 ```
 ---
-`GET /services/{plumber_id}`
-Return a plumbers services
+`GET /services/{service_id}`
+Return a service by id
 
 Response 200
 ```json
-   [
   {
     "id": 1,
     "service_name": "Pipes",
-    "description" : "Pipe Fitting",
-    "price" : 30.00
-  },
-  {
-    "id": 1,
-    "service_name": "Shower",
-    "description" : "Shower Fitting",
-    "price" : 30.00
-  }
-]
+    "description": "Pipe Fitting",
+    "price": 30.00
+}
 ```
 ---
 `POST /services`
@@ -574,44 +571,43 @@ Create a new service
 Response - `201 Created`
 ```json
 {
-    "id": 1,
-    "service_name": "Service",
-    "description" : "Boiler Service",
-    "price" : 250.00
+    "service_name": "Boiler Service",
+    "description": "Boiler Inspection and Maintenance",
+    "price": 100.00
 }
 ```
 ---
-`PUT /services/{plumber_id}`
-Update a service by plumber id
+`PUT /services/{service_id}`
+Update a service by id
 
 Response - `200 OK`
 Request
 ```json
 {
-    "price": 50.00
+    "price": 120.00
 }
 ```
 ---
-`DELETE /service/{plumber_id}`
-Delete a service by plumber id 
+`DELETE /service/{service_id}`
+Delete a service by id 
 
 Response - `204 No Content`
 
 ---
-#### Roles
-`GET /users` 
-Return a list of all users
+#### ROLES
+`GET /roles` 
+Return a list of all roles
 
 Response 200
 ```json
 [
   {
     "id": 1,
-    "role_name" : "Admin"
+    "role_name": "Admin"
   },
   {
     "id": 2,
-    "role_name" : "User"
+    "role_name": "User"
   }
 ]
 ```
@@ -621,10 +617,10 @@ Return a role
 
 Response 200
 ```json
-  {
+ {
     "id": 1,
     "role_name": "Admin"
-  }
+}
 ```
 ---
 `POST /role`
@@ -632,19 +628,17 @@ Create a role
 
 Response - `201 Created`
 ```json
-  {
-    "id": 3,
+{
     "role_name": "Plumber"
-  }
+}
 ```
 ---
-`POST /roles`
-Create a new role
+`PUT /roles/{role_id}`
+Update a role by id
 
 Response - `201 Created`
 ```json
 {
-    "id": 4,
     "role_name": "SuperUser"
 }
 ```
@@ -655,3 +649,61 @@ Delete a role by role id
 Response - `204 No Content`
 
 ---
+#### INVOICES
+`GET /invoices` 
+Return a list of all invoices
+
+Response 200
+```json
+[
+  {
+    "id": 1,
+    "total_amount": 200.00,
+    "status": "Pending",
+    "appointment_id": 1
+  },
+  {
+    "id": 2,
+    "total_amount": 150.00,
+    "status": "Paid",
+    "appointment_id": 2
+  }
+]
+```
+---
+`GET /invoices/{invoice_id}`
+Return an invoice by id
+
+Response 200
+```json
+{
+    "id": 1,
+    "total_amount": 200.00,
+    "status": "Pending",
+    "appointment_id": 1
+}
+```
+---
+`POST /invoices`
+Create an invoice
+
+Response - `201 Created`
+```json
+{
+    "total_amount": 100.00,
+    "status": "Pending",
+    "appointment_id": 3
+}
+```
+---
+`PUT /invoices/{invoice_id}`
+Update an invoice by id
+
+Response - `201 Created`
+```json
+{
+    "status": "Paid"
+}
+```
+---
+
