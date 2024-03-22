@@ -54,7 +54,7 @@ erDiagram
         serial id PK
         varchar service_name
         varchar description
-        varchar price
+        decimal price
     }
 
     appointment_statuses {
